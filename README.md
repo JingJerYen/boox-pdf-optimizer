@@ -1,4 +1,4 @@
-# pdfsimpler
+# boox-pdf-optimizer
 
 Optimize bloated PDFs exported from BOOX e-note devices.
 
