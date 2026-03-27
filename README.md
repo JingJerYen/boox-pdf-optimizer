@@ -31,6 +31,9 @@ python3 pdfsimpler.py input.pdf --precision 1
 
 # Maximum compression: rasterize pages as images (lossy)
 python3 pdfsimpler.py input.pdf --mode rasterize --dpi 150
+
+# Even smaller: grayscale rasterize (loses color)
+python3 pdfsimpler.py input.pdf --mode rasterize --dpi 150 --grayscale
 ```
 
 ## Modes
@@ -53,6 +56,7 @@ Lossy. Renders each page as a grayscale PNG image. Maximum compression, but lose
 
 Options:
 - `--dpi` — resolution (default: 200, try 150 for smaller files)
+- `--grayscale` — render in grayscale instead of RGB (roughly half the size, but loses ink colors)
 - `--quality` — JPEG quality if you modify the code (currently uses PNG for best quality on line art)
 
 ## Results
@@ -65,6 +69,7 @@ Tested on a 32-page differential geometry notebook exported from BOOX Note Air:
 | `--mode optimize` | 29.6 MB | 4.2x smaller |
 | `--mode optimize --precision 1` | 20 MB | 6.3x smaller |
 | `--mode rasterize --dpi 150` | 31.4 MB | 4.0x smaller |
+| `--mode rasterize --dpi 150 --grayscale` | 17.7 MB | 7.1x smaller |
 
 ## Options
 
@@ -80,6 +85,7 @@ options:
   --dpi DPI             DPI for rasterize mode (default: 200)
   --quality QUALITY     JPEG quality for rasterize mode (default: 85)
   --precision PRECISION Decimal precision for coordinates in optimize mode (default: 2)
+  --grayscale           Rasterize in grayscale instead of RGB (smaller file, loses color)
 ```
 
 ## How It Works

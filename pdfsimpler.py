@@ -285,12 +285,14 @@ def optimize(input_path: str, output_path: str, precision: int = 2) -> None:
     print(f"\n  Done!  {in_size / 1024 / 1024:.1f} MB → {out_size / 1024 / 1024:.1f} MB  ({ratio:.1f}× smaller)")
 
 
-def rasterize(input_path: str, output_path: str, dpi: int = 200, quality: int = 85) -> None:
+def rasterize(input_path: str, output_path: str, dpi: int = 200, quality: int = 85,
+              grayscale: bool = False) -> None:
     """Render each page as an image and build a new PDF."""
     import fitz  # PyMuPDF
     from PIL import Image
 
-    print(f"Opening {input_path} ...")
+    color_mode = "grayscale" if grayscale else "RGB"
+    print(f"Opening {input_path} ({color_mode}) ...")
     doc = fitz.open(input_path)
     total_pages = len(doc)
 
@@ -303,12 +305,12 @@ def rasterize(input_path: str, output_path: str, dpi: int = 200, quality: int = 
     for pg_idx in range(total_pages):
         print(f"  Page {pg_idx + 1}/{total_pages}: rendering at {dpi} DPI ...")
         page = doc[pg_idx]
-        pix = page.get_pixmap(matrix=mat)
+        cs = fitz.csGRAY if grayscale else fitz.csRGB
+        pix = page.get_pixmap(matrix=mat, colorspace=cs)
 
-        # Convert to PIL for better compression control
-        img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+        pil_mode = "L" if grayscale else "RGB"
+        img = Image.frombytes(pil_mode, (pix.width, pix.height), pix.samples)
 
-        # For mostly-white pages with dark strokes, PNG compresses better than JPEG
         buf = io.BytesIO()
         img.save(buf, format="PNG", optimize=True)
         img_data = buf.getvalue()
@@ -344,6 +346,7 @@ def main():
     parser.add_argument("--dpi", type=int, default=200, help="DPI for rasterize mode (default: 200)")
     parser.add_argument("--quality", type=int, default=85, help="JPEG quality for rasterize mode (default: 85)")
     parser.add_argument("--precision", type=int, default=2, help="Decimal precision for coordinates in optimize mode (default: 2)")
+    parser.add_argument("--grayscale", action="store_true", help="Rasterize in grayscale instead of RGB (smaller file, loses color)")
 
     args = parser.parse_args()
 
@@ -362,7 +365,8 @@ def main():
     if args.mode == "optimize":
         optimize(input_path, output_path, precision=args.precision)
     else:
-        rasterize(input_path, output_path, dpi=args.dpi, quality=args.quality)
+        rasterize(input_path, output_path, dpi=args.dpi, quality=args.quality,
+                 grayscale=args.grayscale)
 
 
 if __name__ == "__main__":
