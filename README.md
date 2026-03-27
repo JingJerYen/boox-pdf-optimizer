@@ -17,22 +17,26 @@ BOOX `.note` to PDF conversion creates one PDF annotation per pen stroke. A 30-p
 pip install pikepdf pymupdf Pillow
 ```
 
-## Usage
+## Quick Start
 
 ```bash
-# Default: near-lossless optimization (flatten annotations, merge strokes)
+# Just run it — default mode is optimize (near-lossless, preserves colors & vectors)
 python3 pdfsimpler.py input.pdf
 
 # Specify output path
 python3 pdfsimpler.py input.pdf -o output.pdf
+```
 
-# More aggressive coordinate rounding (1 decimal place)
+### Want it even smaller?
+
+```bash
+# Aggressive coordinate rounding (still vector, still has color)
 python3 pdfsimpler.py input.pdf --precision 1
 
-# Maximum compression: rasterize pages as images (lossy)
+# Rasterize as images (lossy, but much smaller)
 python3 pdfsimpler.py input.pdf --mode rasterize --dpi 150
 
-# Even smaller: grayscale rasterize (loses color)
+# Maximum compression: grayscale rasterize (smallest possible, loses color)
 python3 pdfsimpler.py input.pdf --mode rasterize --dpi 150 --grayscale
 ```
 
@@ -52,24 +56,23 @@ What it does:
 
 ### `rasterize`
 
-Lossy. Renders each page as a grayscale PNG image. Maximum compression, but loses vector data.
+Lossy. Renders each page as a PNG image. Loses vector data but can compress further.
 
 Options:
 - `--dpi` — resolution (default: 200, try 150 for smaller files)
 - `--grayscale` — render in grayscale instead of RGB (roughly half the size, but loses ink colors)
-- `--quality` — JPEG quality if you modify the code (currently uses PNG for best quality on line art)
 
 ## Results
 
 Tested on a 32-page differential geometry notebook exported from BOOX Note Air:
 
-| Version | Size | Reduction |
-|---|---|---|
-| Original (BOOX export) | 126 MB | — |
-| `--mode optimize` | 29.6 MB | 4.2x smaller |
-| `--mode optimize --precision 1` | 20 MB | 6.3x smaller |
-| `--mode rasterize --dpi 150` | 31.4 MB | 4.0x smaller |
-| `--mode rasterize --dpi 150 --grayscale` | 17.7 MB | 7.1x smaller |
+| Command | Size | Reduction | Color | Vector |
+|---|---|---|---|---|
+| Original (BOOX export) | 126 MB | — | Yes | Yes |
+| **`python3 pdfsimpler.py input.pdf`** (default) | 29.6 MB | 4.2x | Yes | Yes |
+| `--precision 1` | 20 MB | 6.3x | Yes | Yes |
+| `--mode rasterize --dpi 150` | 31.4 MB | 4.0x | Yes | No |
+| `--mode rasterize --dpi 150 --grayscale` | **17.7 MB** | **7.1x** | No | No |
 
 ## Options
 
