@@ -64,7 +64,7 @@ Tested on a 32-page differential geometry notebook exported from BOOX Note Air:
 | Original (BOOX export) | 126 MB | — |
 | `--mode optimize` | 29.6 MB | 4.2x smaller |
 | `--mode optimize --precision 1` | 20 MB | 6.3x smaller |
-| `--mode rasterize --dpi 150` | 17.7 MB | 7.1x smaller |
+| `--mode rasterize --dpi 150` | 31.4 MB | 4.0x smaller |
 
 ## Options
 

@@ -303,10 +303,10 @@ def rasterize(input_path: str, output_path: str, dpi: int = 200, quality: int = 
     for pg_idx in range(total_pages):
         print(f"  Page {pg_idx + 1}/{total_pages}: rendering at {dpi} DPI ...")
         page = doc[pg_idx]
-        pix = page.get_pixmap(matrix=mat, colorspace=fitz.csGRAY)
+        pix = page.get_pixmap(matrix=mat)
 
         # Convert to PIL for better compression control
-        img = Image.frombytes("L", (pix.width, pix.height), pix.samples)
+        img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
 
         # For mostly-white pages with dark strokes, PNG compresses better than JPEG
         buf = io.BytesIO()
