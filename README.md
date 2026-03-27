@@ -76,20 +76,13 @@ Tested on a 32-page differential geometry notebook exported from BOOX Note Air:
 
 ## Options
 
-```
-positional arguments:
-  input                 Input PDF file
-
-options:
-  -o, --output OUTPUT   Output PDF file (default: input_optimized.pdf)
-  --mode {optimize,rasterize}
-                        optimize = flatten annotations (near-lossless)
-                        rasterize = render as images (lossy)
-  --dpi DPI             DPI for rasterize mode (default: 200)
-  --quality QUALITY     JPEG quality for rasterize mode (default: 85)
-  --precision PRECISION Decimal precision for coordinates in optimize mode (default: 2)
-  --grayscale           Rasterize in grayscale instead of RGB (smaller file, loses color)
-```
+| Option | Applies to | Description |
+|---|---|---|
+| `-o, --output` | both | Output PDF file path (default: `input_optimized.pdf` or `input_rasterized.pdf`) |
+| `--mode` | — | `optimize` (default) = flatten annotations, keep vectors; `rasterize` = render as images |
+| `--precision` | optimize only | Decimal places for coordinates (default: 2, try 1 for smaller files) |
+| `--dpi` | rasterize only | Render resolution (default: 200, try 150 for smaller files) |
+| `--grayscale` | rasterize only | Render in grayscale instead of RGB (half the size, loses color) |
 
 ## How It Works
 
