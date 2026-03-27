@@ -99,6 +99,30 @@ BOOX stores each pen stroke as a PDF `/Stamp` annotation with an appearance stre
 
 This tool flattens all annotations into the page content stream, merges connected segments, and lets FlateDecode compress one large stream instead of thousands of tiny ones.
 
+## Google Drive Automation (Optional)
+
+Automatically optimize BOOX PDFs when they sync to Google Drive.
+
+**Architecture:** Apps Script polls your Drive folder every 5 minutes. When a new PDF appears, it calls a Cloud Function that downloads, optimizes, and uploads the result back.
+
+### Prerequisites
+
+- Google Cloud account ([free tier](https://cloud.google.com/free) works)
+- `gcloud` CLI installed and logged in
+
+### Deploy
+
+```bash
+# 1. Deploy the Cloud Function
+./deploy.sh YOUR_GCP_PROJECT_ID
+
+# 2. Share your Drive folder with the service account (printed by deploy.sh)
+
+# 3. Set up Apps Script — see apps_script/Code.gs for instructions
+```
+
+The deploy script prints the Cloud Function URL, auth token, and step-by-step setup for Apps Script. After setup, any new PDF in the watched folder gets an `_optimized.pdf` version within 5 minutes.
+
 ## License
 
 MIT

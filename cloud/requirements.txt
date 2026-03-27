@@ -1,0 +1,4 @@
+functions-framework==3.*
+google-api-python-client==2.*
+google-auth==2.*
+pikepdf>=9
