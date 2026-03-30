@@ -9,7 +9,7 @@
  *      - AUTH_TOKEN        : the shared secret from deploy.sh
  *
  *   2. Add a time-driven trigger:
- *      Triggers > Add trigger > watchFolder > Time-driven > Every 1 minute
+ *      Triggers > Add trigger > watchFolder > Time-driven > Every N minutes (your choice)
  */
 
 function watchFolder() {

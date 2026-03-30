@@ -103,7 +103,7 @@ This tool flattens all annotations into the page content stream, merges connecte
 
 Automatically optimize BOOX PDFs when they sync to Google Drive.
 
-**Architecture:** Apps Script polls your Drive folder every 5 minutes. When a new PDF appears, it calls a Cloud Function that downloads, optimizes, and uploads the result back.
+**Architecture:** Apps Script periodically polls your Drive folder. When a new PDF appears, it calls a Cloud Function that downloads, optimizes, and uploads the result back.
 
 ### Prerequisites
 
@@ -121,7 +121,7 @@ Automatically optimize BOOX PDFs when they sync to Google Drive.
 # 3. Set up Apps Script — see apps_script/Code.gs for instructions
 ```
 
-The deploy script prints the Cloud Function URL, auth token, and step-by-step setup for Apps Script. After setup, any new PDF in the watched folder gets an `_optimized.pdf` version within 5 minutes.
+The deploy script prints the Cloud Function URL, auth token, and step-by-step setup for Apps Script. After setup, any new PDF in the watched folder automatically gets an `_optimized.pdf` version.
 
 ## License
 
