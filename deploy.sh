@@ -53,7 +53,9 @@ FUNCTION_URL=$(gcloud functions describe "$FUNCTION_NAME" \
   --gen2 --project="$PROJECT_ID" --region="$REGION" \
   --format='value(serviceConfig.uri)')
 
-SERVICE_ACCOUNT="${PROJECT_ID}@appspot.gserviceaccount.com"
+# Cloud Functions gen2 runs as the Compute Engine default service account
+PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')
+SERVICE_ACCOUNT="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
 
 echo ""
 echo "========================================"
