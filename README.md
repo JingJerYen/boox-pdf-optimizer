@@ -101,27 +101,61 @@ This tool flattens all annotations into the page content stream, merges connecte
 
 ## Google Drive Automation (Optional)
 
-Automatically optimize BOOX PDFs when they sync to Google Drive.
+Automatically optimize BOOX PDFs when they sync to Google Drive — no manual steps after setup.
 
-**Architecture:** Apps Script periodically polls your Drive folder. When a new PDF appears, it calls a Cloud Function that downloads, optimizes, and uploads the result back.
+**How it works:** A Google Apps Script runs on a timer and watches your Drive folder. When it finds a new PDF, it sends it to a Google Cloud Function that downloads, optimizes, and uploads the result back as `filename_optimized.pdf`.
+
+**Cost:** Free. Apps Script and Cloud Functions both have free tiers that this workload stays well within. A Google Cloud account with billing enabled is required (credit card needed to activate, but you won't be charged within free limits).
 
 ### Prerequisites
 
-- Google Cloud account ([free tier](https://cloud.google.com/free) works)
-- `gcloud` CLI installed and logged in
+- A [Google Cloud](https://cloud.google.com/free) account with billing enabled
+- `gcloud` CLI — install from [cloud.google.com/sdk](https://cloud.google.com/sdk/docs/install), then run `gcloud auth login`
 
-### Deploy
+> **No local setup needed.** Google Cloud Shell is a free browser-based Linux terminal with `gcloud` and `git` pre-installed.
+
+### Step 1 — Deploy the Cloud Function
+
+Open [Google Cloud Shell](https://shell.cloud.google.com), then run:
 
 ```bash
-# 1. Deploy the Cloud Function
+git clone https://github.com/JingJerYen/boox-pdf-optimizer.git
+cd boox-pdf-optimizer
 ./deploy.sh YOUR_GCP_PROJECT_ID
-
-# 2. Share your Drive folder with the service account (printed by deploy.sh)
-
-# 3. Set up Apps Script — see apps_script/Code.gs for instructions
 ```
 
-The deploy script prints the Cloud Function URL, auth token, and step-by-step setup for Apps Script. After setup, any new PDF in the watched folder automatically gets an `_optimized.pdf` version.
+The script prints a **Cloud Function URL**, an **Auth Token**, and a **Service Account email** — save all three for the next steps.
+
+### Step 2 — Share your Drive folder with the service account
+
+In Google Drive, right-click your BOOX sync folder → Share → add the Service Account email from Step 1 with **Editor** access.
+
+### Step 3 — Set up Apps Script
+
+1. Go to [script.google.com](https://script.google.com) and create a new project
+2. Paste the contents of `apps_script/Code.gs` and save
+3. Go to **Project Settings → Script Properties** and add:
+
+| Property | Value |
+|---|---|
+| `FOLDER_ID` | The ID at the end of your Drive folder URL — the part after `/folders/` and before any `?` |
+| `CLOUD_FUNCTION_URL` | The URL from Step 1 |
+| `AUTH_TOKEN` | The token from Step 1 |
+
+4. Add a trigger: **Triggers → Add trigger → `watchFolder` → Time-driven → Every 10 minutes**
+
+### Step 4 — Test
+
+Run `watchFolder` manually from the Apps Script editor. The execution log should show:
+
+```
+Optimizing: my-notes.pdf
+Done: my-notes.pdf → 29.6 MB (4.2x smaller)
+```
+
+Then check your Drive folder for `my-notes_optimized.pdf`.
+
+For a detailed explanation of the architecture, permissions model, and troubleshooting, see [CLOUD_SETUP.md](CLOUD_SETUP.md).
 
 ## License
 
