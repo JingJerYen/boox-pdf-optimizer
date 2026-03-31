@@ -13,6 +13,10 @@ build/
 .vscode/
 .idea/
 
-# Claude Code
-.claude/
+# Claude Code — ignore settings/memory but track shared commands
+.claude/*
+!.claude/commands/
 CLOUD_SETUP.md
+
+# OCR output (personal notes, large files)
+ocr-results/

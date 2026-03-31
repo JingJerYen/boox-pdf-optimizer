@@ -157,6 +157,55 @@ Then check your Drive folder for `my-notes_optimized.pdf`.
 
 For a detailed explanation of the architecture, permissions model, and troubleshooting, see [CLOUD_SETUP.md](CLOUD_SETUP.md).
 
+## Claude Code Skills (AI-powered OCR)
+
+This repo ships two [Claude Code](https://claude.ai/code) slash commands that turn BOOX notes into LaTeX documents using Claude's vision.
+
+### Prerequisites
+
+1. Install [Claude Code](https://claude.ai/code) (requires a Claude Pro or API subscription):
+   ```bash
+   npm install -g @anthropic-ai/claude-code
+   ```
+2. Log in:
+   ```bash
+   claude login
+   ```
+3. Open a terminal **inside this repo directory** — the skills are project-scoped and only activate here.
+
+Python dependencies (`pikepdf`, `pymupdf`, `gdown`) are auto-installed by the skills on first run.
+
+### `/boox-prep` — Prepare a PDF
+
+Downloads from Google Drive (if needed), detects BOOX notes by annotation count, and rasterizes with `pdfsimpler.py`.
+
+```
+/boox-prep notes.pdf
+/boox-prep https://drive.google.com/file/d/FILE_ID/view
+/boox-prep FILE_ID
+```
+
+Outputs `notes_prepped.pdf` and tells you to run `/pdf2latex` next.
+
+### `/pdf2latex` — OCR to LaTeX
+
+Takes a clean local PDF, renders each page as an image, uses Claude vision to transcribe all math and text to LaTeX, then compiles to PDF with `pdflatex`.
+
+```
+/pdf2latex notes_prepped.pdf
+```
+
+Outputs `notes_prepped_latex.tex` and `notes_prepped_latex.pdf`.
+
+### Full pipeline example
+
+```
+/boox-prep https://drive.google.com/file/d/FILE_ID/view
+/pdf2latex notes_prepped.pdf
+```
+
+> **Note:** `/pdf2latex` uses Claude's vision inside your chat session — no extra API cost beyond your subscription. Processing time scales with page count (roughly 10–20 seconds per page).
+
 ## License
 
 MIT
