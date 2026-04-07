@@ -25,11 +25,12 @@ function watchFolder() {
 
   var folder = DriveApp.getFolderById(folderId);
 
-  // Build set of all existing file names to skip already-optimized files
-  var existingNames = {};
+  // Build map of filename → last modified date for all files in folder
+  var existingFiles = {};
   var allFiles = folder.getFiles();
   while (allFiles.hasNext()) {
-    existingNames[allFiles.next().getName()] = true;
+    var f = allFiles.next();
+    existingFiles[f.getName()] = f.getLastUpdated();
   }
 
   // Find PDFs that need optimization
@@ -41,9 +42,9 @@ function watchFolder() {
     // Skip files that are already optimized
     if (name.indexOf("_optimized.pdf") !== -1) continue;
 
-    // Skip if optimized version already exists
+    // Skip if optimized version exists AND is newer than the source PDF
     var optimizedName = name.replace(/\.pdf$/i, "_optimized.pdf");
-    if (existingNames[optimizedName]) continue;
+    if (existingFiles[optimizedName] && existingFiles[optimizedName] >= file.getLastUpdated()) continue;
 
     // Get OAuth token for this user — Cloud Function uses it to upload back to Drive
     var uploadToken = ScriptApp.getOAuthToken();
