@@ -71,11 +71,25 @@ def handle_request(request):
     out_name = f"{stem}_optimized.pdf"
     ul_service = _get_drive_service(token=upload_token)
     media = MediaFileUpload(output_path, mimetype="application/pdf")
-    ul_service.files().create(
-        body={"name": out_name, "parents": [folder_id]},
-        media_body=media,
-        fields="id",
-    ).execute()
+
+    # Update existing file instead of creating a new one to avoid duplicates
+    existing = ul_service.files().list(
+        q=f"name='{out_name}' and '{folder_id}' in parents and trashed=false",
+        fields="files(id)",
+        pageSize=1,
+    ).execute().get("files", [])
+
+    if existing:
+        ul_service.files().update(
+            fileId=existing[0]["id"],
+            media_body=media,
+        ).execute()
+    else:
+        ul_service.files().create(
+            body={"name": out_name, "parents": [folder_id]},
+            media_body=media,
+            fields="id",
+        ).execute()
 
     _cleanup(input_path, output_path)
 
